@@ -126,8 +126,8 @@ PRODUCT_PACKAGES += \
 	keystore.exynos7270 \
 	tlkeymasterM
 
-PRODUCT_PACKAGES += \
-	camera.smdk7270
+#PRODUCT_PACKAGES += \
+#	camera.smdk7270
 
 # OpenMAX IL configuration files
 PRODUCT_COPY_FILES += \
