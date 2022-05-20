@@ -14,10 +14,15 @@
 # limitations under the License.
 #
 
+# Define device-tree path
+DEVICE_PATH := device/samsung/smdk7270
+
 TARGET_LINUX_KERNEL_VERSION := 3.18
 TARGET_KERNEL_SOURCE := kernel/samsung/smdk7270
 
 TARGET_BOARD_INFO_FILE := device/samsung/smdk7270/board-info.txt
+
+TARGET_SPECIFIC_HEADER_PATH += $(DEVICE_PATH)/include
 
 # HACK : To fix up after bring up multimedia devices.
 TARGET_SOC := exynos7570
@@ -73,7 +78,7 @@ TARGET_BOARD_PLATFORM := exynos5
 TARGET_AP_VER := evt1
 
 TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 576716800
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2048000000
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
@@ -88,12 +93,12 @@ BOARD_USE_SIPC_RIL := false
 BOARD_USE_OFFLOAD_AUDIO := false
 BOARD_USE_OFFLOAD_EFFECT := false
 
+
 # HWComposer
 BOARD_USES_VPP := true
 
 # HWC Bring up
 BOARD_USES_HWC_TINY := false
-
 
 # HWCServices
 BOARD_USES_HWC_SERVICES := true
@@ -127,8 +132,8 @@ BOARD_USE_EXYNOS_INIT_RC := true
 BOARD_EXYNOS_ART_OPT := true
 BOARD_EXYNOS_ART_OPTIMIZING_COMPILER_ON := true
 BOARD_EXYNOS_ART_QUICK_COMPILER_ON := true
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=speed
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=speed
+#ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=speed
+#ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=speed
 
 # CAMERA
 # BOARD_BACK_CAMERA_ROTATION := 90
@@ -185,52 +190,17 @@ TARGET_USES_UNIVERSAL_LIBHWJPEG := true
 #RPMB
 #BOARD_USES_MMC_RPMB := true
 
-ifeq ($(BOARD_USE_SCSC_WIFI_BT), true)
-# WiFi related defines
-BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
-BOARD_HOSTAPD_DRIVER             := NL80211
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_slsi
-BOARD_HOSTAPD_PRIVATE_LIB        := lib_driver_cmd_slsi
-BOARD_HAS_SAMSUNG_WLAN           := true
-WPA_SUPPLICANT_VERSION           := VER_0_8_X
-BOARD_WLAN_DEVICE                := slsi
-WIFI_DRIVER_MODULE_ARG           := ""
-WLAN_VENDOR                      := 8
-
-# Bluetooth related defines
-BOARD_HAVE_BLUETOOTH := true
-BOARD_HAVE_BLUETOOTH_SLSI := true
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := hardware/samsung_slsi/libbt/include
-BLUEDROID_HCI_VENDOR_STATIC_LINKING := false
-
-# Enable BT/WIFI related code changes in Android source files
-CONFIG_SAMSUNG_SCSC_WIFIBT       := true
-else
-# WiFi related defines
+# WiFi
+WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
-WPA_SUPPLICANT_VERSION      := VER_0_8_X
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_bcmdhd
-BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_bcmdhd
-BOARD_HOSTAPD_DRIVER        := NL80211
-BOARD_WLAN_DEVICE           := bcmdhd
-BOARD_WLAN_DEVICE_REV       := bcm43438
-#WIFI_DRIVER_MODULE_PATH := "/system/lib/bcmdhd.ko"
-WIFI_DRIVER_MODULE_NAME := "bcmdhd"
-WIFI_DRIVER_FW_PATH_STA := "/vendor/firmware/fw_bcmdhd.bin"
-WIFI_DRIVER_FW_PATH_AP := "/vendor/firmware/fw_bcmdhd_apsta.bin"
-WIFI_DRIVER_MODULE_ARG  := "nvram_path=/system/vendor/firmware/bcmdhd.cal"
-WIFI_DRIVER_FW_PATH_PARAM := "/sys/module/bcmdhd/parameters/firmware_path"
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_WLAN_DEVICE := bcmdhd
+BOARD_WLAN_DEVICE_REV       := bcm43012
+WIFI_DRIVER_MODULE_NAME := "dhd"
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 
-# Bluetooth related defines
-BOARD_HAVE_BLUETOOTH_BCM := true
+# BT
 BOARD_HAVE_BLUETOOTH := true
-#BOARD_HAVE_BLUETOOTH_SLSI := true
-#BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := hardware/broadcom/libbt/include
-#BLUEDROID_HCI_VENDOR_STATIC_LINKING := false
-
-# Enable BT/WIFI related code changes in Android source files
-#CONFIG_SAMSUNG_SCSC_WIFIBT       := true
-endif
 
 # CURL
 BOARD_USES_CURL := true
@@ -243,3 +213,5 @@ BOARD_USES_SAMSUNG_NFC := true
 
 #Binder
 TARGET_USES_64_BIT_BINDER := true
+
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true

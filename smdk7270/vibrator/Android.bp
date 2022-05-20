@@ -1,0 +1,23 @@
+cc_binary {
+    name: "android.hardware.vibrator@1.2-service.solis",
+    relative_install_path: "hw",
+    init_rc: ["android.hardware.vibrator@1.2-service.solis.rc"],
+    srcs: ["service.cpp", "Vibrator.cpp"],
+    cflags: [
+        "-Wall",
+        "-Werror",
+    ],
+    shared_libs: [
+        "libhidlbase",
+        "libcutils",
+        "libhidltransport",
+        "liblog",
+        "libhwbinder",
+        "libutils",
+        "libhardware",
+        "android.hardware.vibrator@1.0",
+        "android.hardware.vibrator@1.1",
+        "android.hardware.vibrator@1.2",
+    ],
+    vendor: true,
+}

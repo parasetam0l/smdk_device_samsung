@@ -1,1 +1,0 @@
-allow platform_app fimg2d_video_device:chr_file { read write ioctl open };

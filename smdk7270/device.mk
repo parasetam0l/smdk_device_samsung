@@ -48,10 +48,16 @@ PRODUCT_PACKAGES += \
 
 # Audio
 PRODUCT_PACKAGES += \
-	audio.primary.smdk7270 \
+	audio.primary.solis \
 	audio.a2dp.default \
 	audio.usb.default \
 	audio.r_submix.default \
+
+PRODUCT_PACKAGES += \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio.effect@2.0-impl \
+    android.hardware.soundtrigger@2.0-impl \
+    android.hardware.audio@2.0-service
 
 PRODUCT_COPY_FILES += \
 	device/samsung/smdk7270/audio_policy.conf:system/etc/audio_policy.conf \
@@ -64,7 +70,11 @@ PRODUCT_PACKAGES += \
 # for now include gralloc here. should come from hardware/samsung_slsi/exynos5
 PRODUCT_PACKAGES += \
 	gralloc.exynos5 \
-	sensors.exynos5 \
+
+# Sensors
+PRODUCT_PACKAGES += \
+    android.hardware.sensors@1.0-impl \
+    sensors.exynos5 \
 
 PRODUCT_PACKAGES += \
 	libion
@@ -83,7 +93,13 @@ PRODUCT_PACKAGES += \
 
 # Lights HAL
 PRODUCT_PACKAGES += \
-        lights.smdk7270
+    android.hardware.light@2.0-service \
+    android.hardware.light@2.0-impl.so \
+    lights.solis \
+
+# Vibrator HAL
+PRODUCT_PACKAGES += \
+    android.hardware.vibrator@1.0-service.solis
 
 # MobiCore setup
 #PRODUCT_PACKAGES += \
@@ -122,9 +138,11 @@ PRODUCT_PACKAGES += \
 	tlkeyman
 
 # Keymaster
-#PRODUCT_PACKAGES += \
+PRODUCT_PACKAGES += \
 	keystore.exynos7270 \
-	tlkeymasterM
+	tlkeymasterM \
+	android.hardware.keymaster@3.0-impl \
+    android.hardware.keymaster@3.0-service
 
 #PRODUCT_PACKAGES += \
 #	camera.smdk7270
@@ -144,17 +162,6 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
 	frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
 
-# Copy FIMC-IS-FW
-PRODUCT_COPY_FILES += \
-       device/samsung/smdk7270/firmware/fimc_is_lib.bin:system/vendor/firmware/fimc_is_lib.bin \
-       device/samsung/smdk7270/firmware/setfile_3m2.bin:system/vendor/firmware/setfile_3m2.bin \
-       device/samsung/smdk7270/firmware/setfile_5e8.bin:system/vendor/firmware/setfile_5e8.bin \
-
-# Camera configuration files
-PRODUCT_COPY_FILES += \
-	frameworks/native/data/etc/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
-	frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
-
 # WLAN configuration
 # device specific wpa_supplicant.conf
 PRODUCT_COPY_FILES += \
@@ -164,8 +171,20 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
        frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
        frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
-       hardware/samsung_slsi/libbt/conf/bt_did.conf:system/etc/bluetooth/bt_did.conf \
-       device/samsung/smdk7270/bluetooth/bcm43438a1.hcd:$(TARGET_COPY_OUT_VENDOR)/firmware/bcm43438a1.hcd
+
+# Bluetooth
+PRODUCT_PACKAGES += \
+    android.hardware.bluetooth@1.0-service.btlinux
+
+# Wifi
+PRODUCT_PACKAGES += \
+    android.hardware.wifi@1.0-service \
+    dhcpcd.conf \
+    hostapd \
+    wificond \
+    wpa_supplicant \
+    wpa_supplicant.conf \
+    libwpa_client
 
 # GPS configuration files
 ifeq ($(BOARD_USE_GPS), true)
@@ -175,7 +194,7 @@ endif
 
 PRODUCT_PROPERTY_OVERRIDES := \
 	ro.opengles.version=196609 \
-	ro.sf.lcd_density=320 \
+	ro.sf.lcd_density=280 \
 	debug.hwc.otf=1 \
 	debug.hwc.winupdate=1 \
 	debug.hwc.nodirtyregion=1
@@ -191,13 +210,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 #PRODUCT_PACKAGES += \
 	cbd
 
-# Packages needed for WLAN
-PRODUCT_PACKAGES += \
-    dhcpcd.conf \
-    hostapd \
-    wpa_supplicant.conf \
-    wpa_supplicant
-
 # Tinyalsa tools
 PRODUCT_PACKAGES += \
     libtinyalsa \
@@ -208,38 +220,20 @@ PRODUCT_PACKAGES += \
 
 # NFC packages
 PRODUCT_PACKAGES += \
-    libnfc-sec \
-    libnfc_sec_jni \
-    nfc_nci.sec \
-    NfcSec \
+    NfcNci \
     Tag \
-    com.android.nfc_extras
+    android.hardware.nfc@1.1-service \
 
-# NFCEE access control
-ifeq ($(TARGET_BUILD_VARIANT),user)
-    NFCEE_ACCESS_PATH := device/samsung/smdk7270/nfc/nfcee_access.xml
-else
-    NFCEE_ACCESS_PATH := device/samsung/smdk7270/nfc/nfcee_access_debug.xml
-endif
-
-# NFC access control + feature files + configuration
 PRODUCT_COPY_FILES += \
-    $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml \
-    frameworks/native/data/etc/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
-    frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hce.xml:system/etc/permissions/android.hardware.nfc.hce.xml \
-    device/samsung/smdk7270/nfc/libnfc-sec.conf:system/etc/libnfc-sec.conf \
-    device/samsung/smdk7270/nfc/libnfc-sec-hal.conf:system/etc/libnfc-sec-hal.conf \
-    device/samsung/smdk7270/nfc/sec_s3nrn81_firmware_v_4_1_4.bin:system/vendor/firmware/sec_s3nrn81_firmware.bin \
-    device/samsung/smdk7270/nfc/FW_REGSET_INFO_Hero_EU_4_1_4_1_160621.bin:system/etc/sec_s3nrn81_rfreg.bin
+    device/samsung/smdk7270/nfc/libnfc-nxp.solis.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nxp.conf
 
 # Set default USB interface
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-	persist.sys.usb.config=mtp
+	persist.sys.usb.config=adb
 
 PRODUCT_CHARACTERISTICS := phone
 
-PRODUCT_AAPT_CONFIG := normal hdpi xhdpi
+PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := hdpi
 
 # setup dalvik vm configs.
@@ -247,7 +241,7 @@ $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 
 PRODUCT_TAGS += dalvik.gc.type-precise
 
-PRODUCT_COPY_FILES += \
+#PRODUCT_COPY_FILES += \
        device/samsung/smdk7270/conf/init.rc:root/init.rc \
 
 MODEM_USE_ONECHIP := true
@@ -261,9 +255,4 @@ $(call inherit-product, hardware/samsung_slsi/exynos7570/exynos7570.mk)
 #$(call inherit-product, device/samsung/smdk7270/gnss_binaries/gnss_binaries.mk)
 ifeq ($(BOARD_USE_GPS), true)
 $(call inherit-product, vendor/samsung_slsi/gps_libs/gps_libs.mk)
-endif
-
-ifneq ($(BOARD_USE_SCSC_WIFI_BT), true)
-# set wifi file path
-include hardware/broadcom/wlan/$(BOARD_WLAN_DEVICE)/firmware/$(BOARD_WLAN_DEVICE_REV)/device-bcm.mk
 endif

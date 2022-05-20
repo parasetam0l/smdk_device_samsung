@@ -40,9 +40,9 @@ PRODUCT_PROPERTY_OVERRIDES := \
 # Inherit from those products. Most specific first.
 $(call inherit-product, device/samsung/smdk7270/device.mk)
 ifneq ($(TARGET_PLATFORM_32BIT), true)
-$(call inherit-product, build/target/product/aosp_arm64.mk)
+$(call inherit-product, build/target/product/core_64_bit.mk)
 else
-$(call inherit-product, build/target/product/aosp_arm.mk)
+$(call inherit-product, build/target/product/core.mk)
 endif
 
 PRODUCT_NAME := full_smdk7270

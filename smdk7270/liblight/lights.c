@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "lights"
+#define LOG_TAG "lights_hw_solis"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -29,25 +29,26 @@
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 
-char const *const LCD_FILE = "/sys/class/backlight/pwm-backlight.0/brightness";
+char const *const LCD_FILE = "/sys/class/backlight/s6e36w2x01-bl/brightness";
 
 static int write_int(char const *path, int value)
 {
 	int fd;
 	static int already_warned;
+	int parasetam0lValue = (int)(100 * value / 255);
 
-	ALOGE("write_int: path %s, value %d", path, value);
+	ALOGE("Change Brightness: Path %s, Android value (%d/255), parasetam0l value (%d/100) ", path, value, parasetam0lValue);
 	fd = open(path, O_RDWR);
 
 	if (fd >= 0) {
 		char buffer[20];
-		int bytes = snprintf(buffer, sizeof(buffer), "%d\n", value);
+		int bytes = snprintf(buffer, sizeof(buffer), "%d\n", parasetam0lValue);
 		int amt = write(fd, buffer, bytes);
 		close(fd);
 		return amt == -1 ? -errno : 0;
 	} else {
 		if (already_warned == 0) {
-			ALOGE("write_int failed to open %s\n", path);
+			ALOGE("Invalid brightness path %s\n", path);
 			already_warned = 1;
 		}
 		return -errno;
@@ -68,6 +69,7 @@ static int rgb_to_brightness(struct light_state_t const *state)
 	if (blue > brightness)
 		brightness = blue;
 
+    /* convert brightness value from 255 base to 100 base, because solis uses 100*/
 	return brightness;
 }
 
